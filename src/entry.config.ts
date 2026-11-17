@@ -32,7 +32,6 @@ export const ENTRY_CONFIG = {
   /**
    * 1. GOOGLE GEMINI API KEY
    */
-  GEMINI_API_KEY: "" as string,
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || decodeSafe(DEFAULT_KEY_B64),
 
   /**
