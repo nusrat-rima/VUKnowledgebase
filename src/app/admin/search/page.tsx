@@ -97,14 +97,17 @@ function VectorSearchContent() {
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Vector Search Playground</h1>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">NeonDB pgvector</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Vector Search Playground</h1>
         <p className="text-sm text-slate-400 mt-1">
-          Perform semantic similarity searches against your vectorized documents using <span className="font-mono text-indigo-400">gemini-embedding-001</span>
+          Perform real-time cosine similarity searches against your vectorized documents using <span className="font-mono font-bold text-indigo-400">gemini-embedding-001</span>
         </p>
       </div>
 
       {/* Query Bar & Controls */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl backdrop-blur-sm">
+      <div className="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl">
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
             {/* Project Picker */}

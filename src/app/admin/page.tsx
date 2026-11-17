@@ -91,54 +91,54 @@ export default function AdminDashboardPage() {
       {/* Metric Cards Grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {/* Card 1: Projects */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg backdrop-blur-sm">
+        <div className="glass-card rounded-3xl p-6">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Projects</span>
-            <div className="rounded-xl bg-indigo-500/10 p-2 text-indigo-400 border border-indigo-500/20">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Projects</span>
+            <div className="rounded-2xl bg-indigo-500/10 p-2.5 text-indigo-400 border border-indigo-500/20">
               <FolderKanban className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-3xl font-bold text-white">{projects.length}</span>
-            <p className="mt-1 text-xs text-slate-500">Active knowledge spaces</p>
+            <span className="text-3xl font-extrabold text-white">{projects.length}</span>
+            <p className="mt-1 text-xs text-slate-400">Knowledge namespaces</p>
           </div>
         </div>
 
         {/* Card 2: Documents */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg backdrop-blur-sm">
+        <div className="glass-card rounded-3xl p-6">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Documents</span>
-            <div className="rounded-xl bg-sky-500/10 p-2 text-sky-400 border border-sky-500/20">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Documents</span>
+            <div className="rounded-2xl bg-sky-500/10 p-2.5 text-sky-400 border border-sky-500/20">
               <FileText className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-3xl font-bold text-white">{documents.length}</span>
-            <p className="mt-1 text-xs text-slate-500">
+            <span className="text-3xl font-extrabold text-white">{documents.length}</span>
+            <p className="mt-1 text-xs text-slate-400">
               {completedDocs} completed • {processingDocs} processing
             </p>
           </div>
         </div>
 
         {/* Card 3: Vectors Generated */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg backdrop-blur-sm">
+        <div className="glass-card rounded-3xl p-6">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Vector Embeddings</span>
-            <div className="rounded-xl bg-emerald-500/10 p-2 text-emerald-400 border border-emerald-500/20">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Vector Embeddings</span>
+            <div className="rounded-2xl bg-emerald-500/10 p-2.5 text-emerald-400 border border-emerald-500/20">
               <Layers className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-3xl font-bold text-white">{totalVectors}</span>
-            <p className="mt-1 text-xs text-slate-500">Indexed chunks across Vector DB</p>
+            <span className="text-3xl font-extrabold text-white">{totalVectors}</span>
+            <p className="mt-1 text-xs text-slate-400">Indexed in Neon pgvector</p>
           </div>
         </div>
 
         {/* Card 4: Model & DB */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg backdrop-blur-sm">
+        <div className="glass-card rounded-3xl p-6">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Embedding Engine</span>
-            <div className="rounded-xl bg-purple-500/10 p-2 text-purple-400 border border-purple-500/20">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Embedding Engine</span>
+            <div className="rounded-2xl bg-purple-500/10 p-2.5 text-purple-400 border border-purple-500/20">
               <Sparkles className="h-4 w-4" />
             </div>
           </div>
@@ -146,9 +146,9 @@ export default function AdminDashboardPage() {
             <span className="font-mono text-sm font-bold text-purple-300 block truncate">
               gemini-embedding-001
             </span>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
-              <Database className="h-3 w-3 text-slate-400" />
-              <span>DB: <strong className="text-slate-300 uppercase">{settings?.vectorDb?.provider || "local"}</strong></span>
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-400">
+              <Database className="h-3 w-3 text-cyan-400" />
+              <span>DB: <strong className="text-white uppercase">{settings?.vectorDb?.provider || "neon"}</strong></span>
             </div>
           </div>
         </div>
@@ -158,14 +158,14 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Link
           href="/admin/documents?tab=files"
-          className="group flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/40 p-5 transition hover:border-indigo-500/40 hover:bg-slate-900/80"
+          className="glass-card group flex items-center justify-between rounded-3xl p-6 hover:border-indigo-500/50"
         >
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600/15 text-indigo-400 border border-indigo-500/20 transition group-hover:scale-105">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600/15 text-indigo-400 border border-indigo-500/20 transition group-hover:scale-105">
               <UploadCloud className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white group-hover:text-indigo-300">Upload Documents</h3>
+              <h3 className="text-sm font-bold text-white group-hover:text-indigo-300">Upload Documents</h3>
               <p className="text-xs text-slate-400">PDFs, TXT, MD, CSV, JSON files</p>
             </div>
           </div>
@@ -174,14 +174,14 @@ export default function AdminDashboardPage() {
 
         <Link
           href="/admin/documents?tab=web"
-          className="group flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/40 p-5 transition hover:border-sky-500/40 hover:bg-slate-900/80"
+          className="glass-card group flex items-center justify-between rounded-3xl p-6 hover:border-cyan-500/50"
         >
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-600/15 text-sky-400 border border-sky-500/20 transition group-hover:scale-105">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-600/15 text-cyan-400 border border-cyan-500/20 transition group-hover:scale-105">
               <Globe className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white group-hover:text-sky-300">Scrape Websites</h3>
+              <h3 className="text-sm font-bold text-white group-hover:text-cyan-300">Scrape Websites</h3>
               <p className="text-xs text-slate-400">Extract web pages into embeddings</p>
             </div>
           </div>
@@ -190,14 +190,14 @@ export default function AdminDashboardPage() {
 
         <Link
           href="/admin/search"
-          className="group flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/40 p-5 transition hover:border-emerald-500/40 hover:bg-slate-900/80"
+          className="glass-card group flex items-center justify-between rounded-3xl p-6 hover:border-emerald-500/50"
         >
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-600/15 text-emerald-400 border border-emerald-500/20 transition group-hover:scale-105">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600/15 text-emerald-400 border border-emerald-500/20 transition group-hover:scale-105">
               <Search className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white group-hover:text-emerald-300">Search Playground</h3>
+              <h3 className="text-sm font-bold text-white group-hover:text-emerald-300">Search Playground</h3>
               <p className="text-xs text-slate-400">Test Gemini semantic search</p>
             </div>
           </div>
@@ -206,15 +206,15 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Recent Documents Table */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-xl overflow-hidden">
-        <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4">
+      <div className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
+        <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4.5 bg-slate-950/40">
           <div>
-            <h2 className="text-base font-semibold text-white">Recent Documents</h2>
-            <p className="text-xs text-slate-400">Latest converted files and web collections</p>
+            <h2 className="text-base font-bold text-white">Recent Documents</h2>
+            <p className="text-xs text-slate-400 mt-0.5">Latest converted files and web collections in NeonDB</p>
           </div>
           <Link
             href="/admin/documents"
-            className="text-xs font-semibold text-indigo-400 hover:text-indigo-300"
+            className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition"
           >
             View All Documents →
           </Link>

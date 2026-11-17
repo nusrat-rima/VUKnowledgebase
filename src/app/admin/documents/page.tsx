@@ -260,20 +260,25 @@ function DocumentsContent() {
       {/* Page Header & Project Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Document Ingestion & Embeddings</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">VuKnowledgeBase Core</span>
+            <span className="h-1 w-1 rounded-full bg-slate-600" />
+            <span className="text-xs text-slate-400">NeonDB Connected</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Document Ingestion & Embeddings</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Upload PDFs, scrape websites, or ingest text — vectorized immediately with <span className="text-indigo-400 font-mono">gemini-embedding-001</span> in the background
+            Upload PDFs, crawl websites, or ingest notes — vectorized with <code className="text-indigo-400 font-mono font-bold">gemini-embedding-001</code> in the background
           </p>
         </div>
 
         {/* Project Selector Bar */}
-        <div className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/80 p-2">
+        <div className="flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-slate-950/80 p-2 shadow-lg">
           <FolderKanban className="h-4 w-4 text-indigo-400 ml-2" />
-          <span className="text-xs text-slate-400">Target Project:</span>
+          <span className="text-xs font-medium text-slate-400">Target Project:</span>
           <select
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
-            className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white focus:border-indigo-500 focus:outline-none"
+            className="rounded-xl border border-white/[0.1] bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white focus:border-indigo-500 focus:outline-none"
           >
             {projects.map((p) => (
               <option key={p.id} value={p.id}>
@@ -287,7 +292,7 @@ function DocumentsContent() {
       {/* Alert Banner */}
       {alertMessage && (
         <div
-          className={`flex items-center gap-3 rounded-xl border p-4 text-xs ${
+          className={`flex items-center gap-3 rounded-2xl border p-4 text-xs shadow-lg animate-in fade-in duration-200 ${
             alertMessage.type === "success"
               ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
               : "border-rose-500/30 bg-rose-500/10 text-rose-300"
@@ -298,20 +303,20 @@ function DocumentsContent() {
           ) : (
             <Loader2 className="h-4 w-4 text-rose-400 shrink-0" />
           )}
-          <span>{alertMessage.text}</span>
+          <span className="font-medium">{alertMessage.text}</span>
         </div>
       )}
 
       {/* Ingestion Source Tabs */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-xl overflow-hidden backdrop-blur-sm">
+      <div className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
         {/* Tab Header */}
-        <div className="flex border-b border-slate-800 bg-slate-950/40">
+        <div className="flex border-b border-white/[0.08] bg-slate-950/60 p-2 gap-2">
           <button
             onClick={() => setActiveTab("files")}
-            className={`flex items-center gap-2 px-6 py-3.5 text-xs font-semibold transition border-b-2 ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition ${
               activeTab === "files"
-                ? "border-indigo-500 text-indigo-400 bg-indigo-500/5"
-                : "border-transparent text-slate-400 hover:text-white"
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <UploadCloud className="h-4 w-4" />
@@ -320,10 +325,10 @@ function DocumentsContent() {
 
           <button
             onClick={() => setActiveTab("web")}
-            className={`flex items-center gap-2 px-6 py-3.5 text-xs font-semibold transition border-b-2 ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition ${
               activeTab === "web"
-                ? "border-indigo-500 text-indigo-400 bg-indigo-500/5"
-                : "border-transparent text-slate-400 hover:text-white"
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <Globe className="h-4 w-4" />
@@ -332,10 +337,10 @@ function DocumentsContent() {
 
           <button
             onClick={() => setActiveTab("text")}
-            className={`flex items-center gap-2 px-6 py-3.5 text-xs font-semibold transition border-b-2 ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition ${
               activeTab === "text"
-                ? "border-indigo-500 text-indigo-400 bg-indigo-500/5"
-                : "border-transparent text-slate-400 hover:text-white"
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <FileText className="h-4 w-4" />
@@ -347,64 +352,77 @@ function DocumentsContent() {
         <div className="p-6">
           {/* TAB 1: File Upload */}
           {activeTab === "files" && (
-            <form onSubmit={handleUploadFiles} className="space-y-4">
+            <form onSubmit={handleUploadFiles} className="space-y-5">
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleFileDrop}
-                className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-800 bg-slate-950/40 p-8 text-center transition hover:border-indigo-500/40"
+                className="group flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/[0.12] bg-slate-950/60 p-10 text-center transition hover:border-indigo-500/50 hover:bg-slate-950/80 cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 mb-3">
-                  <FileUp className="h-6 w-6" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600/15 text-indigo-400 border border-indigo-500/25 mb-4 group-hover:scale-110 transition shadow-lg shadow-indigo-500/10">
+                  <FileUp className="h-7 w-7" />
                 </div>
-                <p className="text-sm font-semibold text-slate-200">
-                  Drag and drop your files here, or{" "}
-                  <label className="text-indigo-400 cursor-pointer hover:underline">
-                    browse
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      multiple
-                      accept=".pdf,.txt,.md,.json,.csv,.docx"
-                      onChange={(e) => {
-                        if (e.target.files) setSelectedFiles(Array.from(e.target.files));
-                      }}
-                      className="hidden"
-                    />
-                  </label>
+                <p className="text-base font-bold text-white">
+                  Drop your PDF, TXT, or markdown documents here, or{" "}
+                  <span className="text-indigo-400 underline decoration-indigo-500/40 underline-offset-4">browse files</span>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept=".pdf,.txt,.md,.json,.csv,.docx"
+                    onChange={(e) => {
+                      if (e.target.files) setSelectedFiles(Array.from(e.target.files));
+                    }}
+                    className="hidden"
+                  />
                 </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  Supports PDF documents, Plain Text (.txt), Markdown (.md), JSON, CSV
+                <p className="text-xs text-slate-400 mt-2 max-w-sm">
+                  Documents are parsed, split into semantic windows, and embedded directly with <code className="text-indigo-300 font-mono">gemini-embedding-001</code> into NeonDB.
                 </p>
 
+                {/* Formats row */}
+                <div className="flex items-center gap-2 mt-5">
+                  {["PDF Documents", "Plain Text (.txt)", "Markdown (.md)", "JSON / CSV"].map((fmt, i) => (
+                    <span
+                      key={i}
+                      className="rounded-full bg-white/[0.04] border border-white/[0.08] px-3 py-1 text-[10px] font-mono font-medium text-slate-400"
+                    >
+                      {fmt}
+                    </span>
+                  ))}
+                </div>
+
                 {selectedFiles.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2 justify-center max-w-lg">
+                  <div className="mt-5 flex flex-wrap gap-2 justify-center max-w-lg" onClick={(e) => e.stopPropagation()}>
                     {selectedFiles.map((f, i) => (
                       <span
                         key={i}
-                        className="rounded-lg bg-indigo-600/15 px-2.5 py-1 text-[11px] font-mono text-indigo-300 border border-indigo-500/30"
+                        className="rounded-xl bg-indigo-600/20 px-3 py-1.5 text-xs font-mono font-semibold text-indigo-200 border border-indigo-500/30 flex items-center gap-1.5"
                       >
-                        {f.name} ({(f.size / 1024).toFixed(1)} KB)
+                        <FileText className="h-3.5 w-3.5 text-indigo-400" />
+                        <span>{f.name}</span>
+                        <span className="text-slate-400 text-[10px]">({(f.size / 1024).toFixed(1)} KB)</span>
                       </span>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end pt-1">
                 <button
                   type="submit"
                   disabled={uploadingFiles || selectedFiles.length === 0}
-                  className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-500 disabled:opacity-50"
+                  className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 px-6 py-3 text-xs font-bold text-white shadow-lg shadow-indigo-600/25 transition active:scale-95 disabled:opacity-40"
                 >
                   {uploadingFiles ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Queueing Uploads...</span>
+                      <span>Queueing Background Ingestion...</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="h-4 w-4" />
-                      <span>Ingest & Vectorize {selectedFiles.length > 0 ? `(${selectedFiles.length})` : ""}</span>
+                      <span>Ingest & Vectorize {selectedFiles.length > 0 ? `(${selectedFiles.length} files)` : ""}</span>
                     </>
                   )}
                 </button>
@@ -503,17 +521,17 @@ function DocumentsContent() {
       </div>
 
       {/* Ingestion Activity & Documents Table */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-xl overflow-hidden backdrop-blur-sm">
-        <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4">
+      <div className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
+        <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4.5 bg-slate-950/40">
           <div>
-            <h2 className="text-base font-semibold text-white">Project Documents & Vector Status</h2>
-            <p className="text-xs text-slate-400">
-              Real-time background conversion status and chunk indexing
+            <h2 className="text-base font-bold text-white">Project Documents & Vector Status</h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Real-time background conversion status and chunk indexing in NeonDB
             </p>
           </div>
           <button
             onClick={() => fetchDocuments()}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs text-slate-400 hover:text-white transition"
+            className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-slate-900/80 px-3.5 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:border-slate-700 transition"
           >
             <RefreshCw className="h-3.5 w-3.5" />
             <span>Refresh</span>

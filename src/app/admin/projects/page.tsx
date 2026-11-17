@@ -94,14 +94,17 @@ export default function ProjectsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Projects Management</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">VuKnowledgeBase Namespaces</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Projects Management</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Organize documents and vector namespaces into isolated projects
+            Organize documents and vector namespaces into isolated projects in NeonDB
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-500 active:scale-95"
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-600/25 transition active:scale-95"
         >
           <Plus className="h-4 w-4" />
           <span>Create New Project</span>
@@ -113,7 +116,7 @@ export default function ProjectsPage() {
         {projects.map((project) => (
           <div
             key={project.id}
-            className="flex flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl backdrop-blur-sm transition hover:border-slate-700"
+            className="glass-card flex flex-col justify-between rounded-3xl p-6"
           >
             <div>
               <div className="flex items-start justify-between gap-2">
