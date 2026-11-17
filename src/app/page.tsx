@@ -365,89 +365,85 @@ export default function FrontPage() {
               </div>
             </div>
 
-            {/* Matched Sources / Best Matches Section */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="h-4 w-4 text-blue-400" />
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                    Best Matching Knowledge Sources ({result.sources.length})
-                  </h3>
+            {/* Matched Sources / Best Matches Section (shown when relevant university sources exist) */}
+            {result.sources.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-blue-400" />
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                      Best Matching Knowledge Sources ({result.sources.length})
+                    </h3>
+                  </div>
+                  <span className="text-xs text-slate-400">
+                    Cosine Similarity Ranking
+                  </span>
                 </div>
-                <span className="text-xs text-slate-400">
-                  Cosine Similarity Ranking
-                </span>
-              </div>
 
-              <div className="space-y-3">
-                {result.sources.map((source, idx) => {
-                  const isExpanded = expandedSourceIndex === idx;
-                  const similarityPercent = Math.round((source.score || 0) * 100);
+                <div className="space-y-3">
+                  {result.sources.map((source, idx) => {
+                    const isExpanded = expandedSourceIndex === idx;
+                    const similarityPercent = Math.round((source.score || 0) * 100);
 
-                  return (
-                    <div
-                      key={source.id || idx}
-                      className="admin-card rounded-2xl overflow-hidden border border-white/[0.08] bg-slate-900/60 transition"
-                    >
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setExpandedSourceIndex(isExpanded ? null : idx)
-                        }
-                        className="w-full flex items-center justify-between p-4 text-left hover:bg-white/[0.02] transition"
+                    return (
+                      <div
+                        key={source.id || idx}
+                        className="admin-card rounded-2xl overflow-hidden border border-white/[0.08] bg-slate-900/60 transition"
                       >
-                        <div className="flex items-center gap-3">
-                          <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-blue-600/20 text-xs font-bold text-blue-300 border border-blue-500/25">
-                            #{idx + 1}
-                          </span>
-                          <div>
-                            <span className="text-xs font-bold text-white block">
-                              {source.metadata?.documentTitle || "Official University Document"}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedSourceIndex(isExpanded ? null : idx)
+                          }
+                          className="w-full flex items-center justify-between p-4 text-left hover:bg-white/[0.02] transition"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-blue-600/20 text-xs font-bold text-blue-300 border border-blue-500/25">
+                              #{idx + 1}
                             </span>
-                            {source.metadata?.sourceUrl && (
-                              <span className="text-[11px] text-blue-400 flex items-center gap-1 mt-0.5 font-mono">
-                                {source.metadata.sourceUrl}
+                            <div>
+                              <span className="text-xs font-bold text-white block">
+                                {source.metadata?.documentTitle || "Official University Document"}
                               </span>
+                              {source.metadata?.sourceUrl && (
+                                <span className="text-[11px] text-blue-400 flex items-center gap-1 mt-0.5 font-mono">
+                                  {source.metadata.sourceUrl}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <span
+                              className={`rounded-full px-2.5 py-1 text-[11px] font-bold border ${
+                                similarityPercent >= 75
+                                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                  : similarityPercent >= 60
+                                  ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                                  : "bg-slate-500/10 text-slate-400 border-slate-500/20"
+                              }`}
+                            >
+                              {similarityPercent}% Match
+                            </span>
+                            {isExpanded ? (
+                              <ChevronUp className="h-4 w-4 text-slate-400" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4 text-slate-400" />
                             )}
                           </div>
-                        </div>
+                        </button>
 
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={`rounded-full px-2.5 py-1 text-[11px] font-bold border ${
-                              similarityPercent >= 75
-                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                                : similarityPercent >= 60
-                                ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
-                                : "bg-slate-500/10 text-slate-400 border-slate-500/20"
-                            }`}
-                          >
-                            {similarityPercent}% Match
-                          </span>
-                          {isExpanded ? (
-                            <ChevronUp className="h-4 w-4 text-slate-400" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4 text-slate-400" />
-                          )}
-                        </div>
-                      </button>
-
-                      {isExpanded && (
-                        <div className="border-t border-white/[0.06] bg-slate-950/70 p-4.5 text-xs text-slate-300 leading-relaxed font-sans whitespace-pre-wrap">
-                          {source.metadata?.text || "No excerpt text available for this vector record."}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-
-                {result.sources.length === 0 && (
-                  <div className="rounded-2xl border border-dashed border-white/[0.08] p-8 text-center text-xs text-slate-500">
-                    No matching excerpts found for this query in the vector database.
-                  </div>
-                )}
+                        {isExpanded && (
+                          <div className="border-t border-white/[0.06] bg-slate-950/70 p-4.5 text-xs text-slate-300 leading-relaxed font-sans whitespace-pre-wrap">
+                            {source.metadata?.text || "No excerpt text available for this vector record."}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
