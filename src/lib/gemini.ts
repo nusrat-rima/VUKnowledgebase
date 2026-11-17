@@ -18,7 +18,8 @@ function normalizeModelName(model: string): string {
  */
 export async function getGeminiEmbedding(
   text: string,
-  modelName: string = ENTRY_CONFIG.EMBEDDING_MODEL
+  modelName: string = ENTRY_CONFIG.EMBEDDING_MODEL,
+  dimensionality: number = 768
 ): Promise<number[]> {
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
@@ -30,17 +31,22 @@ export async function getGeminiEmbedding(
   const model = normalizeModelName(modelName);
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:embedContent?key=${apiKey}`;
 
+  const requestBody: any = {
+    model: `models/${model}`,
+    content: {
+      parts: [{ text }],
+    },
+  };
+  if (dimensionality) {
+    requestBody.outputDimensionality = dimensionality;
+  }
+
   const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      model: `models/${model}`,
-      content: {
-        parts: [{ text }],
-      },
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {
@@ -48,7 +54,7 @@ export async function getGeminiEmbedding(
     // Try fallback to text-embedding-004 if gemini-embedding-001 returned 404 in certain regions
     if (response.status === 404 && model === "gemini-embedding-001") {
       console.warn("gemini-embedding-001 returned 404, attempting fallback to text-embedding-004...");
-      return getGeminiEmbedding(text, "text-embedding-004");
+      return getGeminiEmbedding(text, "text-embedding-004", dimensionality);
     }
     throw new Error(`Gemini Embedding API Error (${response.status}): ${errorText}`);
   }
@@ -58,7 +64,10 @@ export async function getGeminiEmbedding(
     throw new Error("Invalid response format from Gemini Embedding API: missing embedding.values");
   }
 
-  return data.embedding.values;
+  const rawValues = data.embedding.values;
+  return dimensionality && rawValues.length > dimensionality
+    ? rawValues.slice(0, dimensionality)
+    : rawValues;
 }
 
 /**
@@ -67,7 +76,8 @@ export async function getGeminiEmbedding(
 export async function getGeminiBatchEmbeddings(
   texts: string[],
   modelName: string = ENTRY_CONFIG.EMBEDDING_MODEL,
-  onProgress?: (completed: number, total: number) => void
+  onProgress?: (completed: number, total: number) => void,
+  dimensionality: number = 768
 ): Promise<number[][]> {
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
@@ -84,12 +94,18 @@ export async function getGeminiBatchEmbeddings(
     const slice = texts.slice(i, i + batchSize);
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:batchEmbedContents?key=${apiKey}`;
 
-    const requests = slice.map((t) => ({
-      model: `models/${model}`,
-      content: {
-        parts: [{ text: t }],
-      },
-    }));
+    const requests = slice.map((t) => {
+      const req: any = {
+        model: `models/${model}`,
+        content: {
+          parts: [{ text: t }],
+        },
+      };
+      if (dimensionality) {
+        req.outputDimensionality = dimensionality;
+      }
+      return req;
+    });
 
     let retries = 3;
     let success = false;
@@ -109,7 +125,7 @@ export async function getGeminiBatchEmbeddings(
           const errText = await response.text();
           if (response.status === 404 && model === "gemini-embedding-001") {
             // Fallback for batch
-            return getGeminiBatchEmbeddings(texts, "text-embedding-004", onProgress);
+            return getGeminiBatchEmbeddings(texts, "text-embedding-004", onProgress, dimensionality);
           }
           if (response.status === 429) {
             // Rate limit, wait with backoff
@@ -126,7 +142,11 @@ export async function getGeminiBatchEmbeddings(
         }
 
         for (const item of data.embeddings) {
-          allEmbeddings.push(item.values);
+          let vals: number[] = item.values;
+          if (dimensionality && vals.length > dimensionality) {
+            vals = vals.slice(0, dimensionality);
+          }
+          allEmbeddings.push(vals);
         }
 
         success = true;

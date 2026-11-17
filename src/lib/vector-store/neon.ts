@@ -73,7 +73,12 @@ export class NeonVectorStore implements VectorStore {
 
     // Upsert records
     for (const record of records) {
-      const vectorStr = `[${record.values.join(",")}]`;
+      // Ensure vector length matches 768 dimensions expected by pgvector
+      let values = record.values;
+      if (values.length > 768) {
+        values = values.slice(0, 768);
+      }
+      const vectorStr = `[${values.join(",")}]`;
       const metadataJson = JSON.stringify(record.metadata || {});
       const projectId = namespace || record.metadata?.projectId || targetNamespace;
 
@@ -98,7 +103,11 @@ export class NeonVectorStore implements VectorStore {
     await this.ensureTable();
 
     const { vector, topK = 5, namespace } = options;
-    const vectorStr = `[${vector.join(",")}]`;
+    let queryVector = vector;
+    if (queryVector.length > 768) {
+      queryVector = queryVector.slice(0, 768);
+    }
+    const vectorStr = `[${queryVector.join(",")}]`;
 
     let rows: any[] = [];
 
