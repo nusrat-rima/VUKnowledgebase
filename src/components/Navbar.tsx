@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, FolderKanban } from "lucide-react";
 import { Project } from "@/lib/types";
@@ -76,6 +77,14 @@ export function Navbar({ currentProjectId, onProjectChange }: NavbarProps) {
 
       {/* Right: User profile & Logout */}
       <div className="flex items-center gap-4">
+        <Link
+          href="/"
+          target="_blank"
+          className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-slate-900 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:border-blue-500/40 transition"
+        >
+          <span>View Public Front Page ↗</span>
+        </Link>
+
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600/20 text-xs font-bold text-blue-300 border border-blue-500/30">

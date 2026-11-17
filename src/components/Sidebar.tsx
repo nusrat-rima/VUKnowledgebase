@@ -9,7 +9,8 @@ import {
   Search, 
   GraduationCap,
   Building2,
-  FileText
+  FileText,
+  Sparkles
 } from "lucide-react";
 
 const navigation = [
@@ -17,6 +18,7 @@ const navigation = [
   { name: "Projects", href: "/admin/projects", icon: FolderKanban },
   { name: "Upload Documents", href: "/admin/documents", icon: FileUp },
   { name: "Search Knowledge", href: "/admin/search", icon: Search },
+  { name: "Public Assistant", href: "/", icon: Sparkles },
 ];
 
 export function Sidebar() {

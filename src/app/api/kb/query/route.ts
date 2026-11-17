@@ -50,29 +50,39 @@ ${contextText}
 
 Answer:`;
 
-      try {
-        const genRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: {
-                temperature: 0.2,
-                maxOutputTokens: 1024,
-              },
-            }),
-          }
-        );
+      const modelsToTry = [
+        "gemini-3.1-flash-lite",
+        "gemini-3-flash-preview",
+        "gemini-flash-latest",
+        "gemini-3.5-flash-lite",
+      ];
 
-        if (genRes.ok) {
-          const genData = await genRes.json();
-          aiAnswer =
-            genData.candidates?.[0]?.content?.parts?.[0]?.text || null;
+      for (const m of modelsToTry) {
+        try {
+          const genRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                  temperature: 0.2,
+                  maxOutputTokens: 1024,
+                },
+              }),
+            }
+          );
+
+          if (genRes.ok) {
+            const genData = await genRes.json();
+            aiAnswer =
+              genData.candidates?.[0]?.content?.parts?.[0]?.text || null;
+            if (aiAnswer) break;
+          }
+        } catch (genErr) {
+          console.warn(`AI generation error with ${m}:`, genErr);
         }
-      } catch (genErr) {
-        console.warn("AI generation error:", genErr);
       }
     }
 
