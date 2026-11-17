@@ -197,6 +197,12 @@ export default function SettingsPage() {
 
           <div className="rounded-xl border border-slate-800 bg-black/60 p-4 font-mono text-xs text-slate-300 space-y-3">
             <div>
+              <span className="text-cyan-400 font-bold block mb-1"># For Neon Serverless Postgres (pgvector):</span>
+              <p className="text-slate-400">VECTOR_DB_PROVIDER=neon</p>
+              <p className="text-slate-400">NEON_DATABASE_URL=postgresql://user:password@endpoint.neon.tech/neondb?sslmode=require</p>
+            </div>
+
+            <div className="border-t border-slate-800/80 pt-2">
               <span className="text-indigo-400 font-bold block mb-1"># For Pinecone:</span>
               <p className="text-slate-400">VECTOR_DB_PROVIDER=pinecone</p>
               <p className="text-slate-400">PINECONE_API_KEY=your_key</p>

@@ -37,9 +37,9 @@ export const ENTRY_CONFIG = {
   /**
    * 4. VECTOR DATABASE CONFIGURATION (Default Fallback)
    * You can configure your Vector DB here or in your .env / .env.local file.
-   * Supported providers: 'pinecone' | 'upstash' | 'supabase' | 'qdrant' | 'local'
+   * Supported providers: 'neon' | 'pinecone' | 'upstash' | 'supabase' | 'qdrant' | 'local'
    */
-  DEFAULT_VECTOR_DB_PROVIDER: (process.env.VECTOR_DB_PROVIDER as "pinecone" | "upstash" | "supabase" | "qdrant" | "local") || "local",
+  DEFAULT_VECTOR_DB_PROVIDER: (process.env.VECTOR_DB_PROVIDER as "neon" | "pinecone" | "upstash" | "supabase" | "qdrant" | "local") || "local",
 
   /**
    * 5. DEFAULT CHUNKING PARAMETERS

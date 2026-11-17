@@ -5,6 +5,7 @@ import { PineconeVectorStore } from "./pinecone";
 import { UpstashVectorStore } from "./upstash";
 import { SupabaseVectorStore } from "./supabase";
 import { QdrantVectorStore } from "./qdrant";
+import { NeonVectorStore } from "./neon";
 
 // Singleton stores to maintain state in serverless memory
 let localStoreInstance: LocalVectorStore | null = null;
@@ -12,6 +13,7 @@ let pineconeStoreInstance: PineconeVectorStore | null = null;
 let upstashStoreInstance: UpstashVectorStore | null = null;
 let supabaseStoreInstance: SupabaseVectorStore | null = null;
 let qdrantStoreInstance: QdrantVectorStore | null = null;
+let neonStoreInstance: NeonVectorStore | null = null;
 
 export function getVectorStore(): VectorStore {
   const provider = (
@@ -21,6 +23,13 @@ export function getVectorStore(): VectorStore {
   ).toLowerCase().trim();
 
   switch (provider) {
+    case "neon":
+    case "neondb":
+      if (!neonStoreInstance) {
+        neonStoreInstance = new NeonVectorStore();
+      }
+      return neonStoreInstance;
+
     case "pinecone":
       if (!pineconeStoreInstance) {
         pineconeStoreInstance = new PineconeVectorStore();

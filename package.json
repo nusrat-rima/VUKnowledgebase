@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.1",
     "cheerio": "^1.0.0",
     "clsx": "^2.1.1",
     "jose": "^5.9.6",
