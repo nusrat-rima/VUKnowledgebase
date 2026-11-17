@@ -1,6 +1,7 @@
 import { neon, NeonQueryFunction } from "@neondatabase/serverless";
 import { VectorRecord, VectorQueryOptions, VectorQueryResult } from "../types";
 import { VectorStore, VectorStoreStats } from "./types";
+import { ENTRY_CONFIG } from "@/entry.config";
 
 export class NeonVectorStore implements VectorStore {
   readonly providerName = "neon";
@@ -14,6 +15,7 @@ export class NeonVectorStore implements VectorStore {
       process.env.NEON_DATABASE_URL ||
       process.env.DATABASE_URL ||
       process.env.POSTGRES_URL ||
+      ENTRY_CONFIG.NEON_DATABASE_URL ||
       "";
     this.tableName = process.env.NEON_TABLE || "document_embeddings";
 
