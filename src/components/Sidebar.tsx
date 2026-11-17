@@ -10,7 +10,9 @@ import {
   Settings, 
   Sparkles, 
   Database,
-  ExternalLink
+  ExternalLink,
+  BookOpen,
+  ArrowUpRight
 } from "lucide-react";
 
 const navigation = [
@@ -28,19 +30,19 @@ export function Sidebar() {
     <aside className="fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
       {/* Brand Header */}
       <div className="flex h-16 items-center gap-3 border-b border-slate-800/80 px-6">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 shadow-md shadow-indigo-600/30">
-          <Sparkles className="h-5 w-5 text-white" />
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 shadow-md shadow-indigo-600/30">
+          <BookOpen className="h-5 w-5 text-white" />
         </div>
         <div>
-          <span className="block text-sm font-bold tracking-tight text-white">Gemini Vector</span>
-          <span className="block text-[11px] font-medium text-indigo-400">Admin Console</span>
+          <span className="block text-sm font-bold tracking-tight text-white">VuKnowledgeBase</span>
+          <span className="block text-[11px] font-medium text-cyan-400">Admin Console</span>
         </div>
       </div>
 
       {/* Navigation Links */}
       <nav className="flex-1 space-y-1.5 px-3 py-6">
         <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-          Main Menu
+          Knowledge Base Admin
         </div>
         {navigation.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
@@ -60,6 +62,16 @@ export function Sidebar() {
             </Link>
           );
         })}
+
+        <div className="pt-4 px-3">
+          <Link
+            href="/"
+            className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 px-3.5 py-2 text-xs font-semibold text-slate-300 hover:border-indigo-500/30 hover:text-white transition"
+          >
+            <span>View Public Portal</span>
+            <ArrowUpRight className="h-3.5 w-3.5 text-indigo-400" />
+          </Link>
+        </div>
       </nav>
 
       {/* Model & Config Pill Footer */}

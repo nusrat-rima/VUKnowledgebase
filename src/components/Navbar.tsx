@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, FolderKanban, Sparkles, CheckCircle2, AlertTriangle, ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { LogOut, FolderKanban, Sparkles, CheckCircle2, AlertTriangle, ChevronDown, BookOpen } from "lucide-react";
 import { Project } from "@/lib/types";
 
 interface NavbarProps {
@@ -118,6 +119,15 @@ export function Navbar({ currentProjectId, onProjectChange }: NavbarProps) {
 
         {/* User & Logout */}
         <div className="flex items-center gap-3 pl-3 border-l border-slate-800">
+          <Link
+            href="/"
+            className="hidden sm:flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900/60 px-2.5 py-1.5 text-xs text-slate-300 hover:text-white hover:border-slate-700 transition"
+            title="Switch to public VuKnowledgeBase portal"
+          >
+            <BookOpen className="h-3.5 w-3.5 text-cyan-400" />
+            <span>Portal</span>
+          </Link>
+
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600/20 text-xs font-bold text-indigo-300 border border-indigo-500/30">
               A

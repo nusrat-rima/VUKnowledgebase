@@ -72,11 +72,20 @@ export default function AdminDashboardPage() {
       )}
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Console Overview</h1>
-        <p className="text-sm text-slate-400 mt-1">
-          Monitor your projects, vectorized documents, and background embedding jobs
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white">VuKnowledgeBase Admin Console</h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Manage projects, upload PDFs, scrape websites, and monitor background Gemini vector conversions
+          </p>
+        </div>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-2 text-xs font-semibold text-slate-300 hover:border-indigo-500/40 hover:text-white transition"
+        >
+          <span>Open VuKnowledgeBase Portal</span>
+          <ArrowUpRight className="h-4 w-4 text-indigo-400" />
+        </Link>
       </div>
 
       {/* Metric Cards Grid */}

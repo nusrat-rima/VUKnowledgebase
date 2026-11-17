@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Gemini Vector Ingestion Admin",
-  description: "Upload PDFs, websites, and documents to generate Gemini embeddings stored in your Vector DB",
+  title: "VuKnowledgeBase - Intelligent Document & Vector Knowledge Base",
+  description: "AI-powered knowledge base searching PDFs, scraped website information, and documents with Gemini and NeonDB",
 };
 
 export default function RootLayout({

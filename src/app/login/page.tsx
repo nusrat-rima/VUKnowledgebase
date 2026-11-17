@@ -48,12 +48,12 @@ export default function LoginPage() {
         <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80 p-8 shadow-2xl backdrop-blur-xl">
           {/* Header */}
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-400 shadow-lg shadow-indigo-500/25">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 shadow-lg shadow-indigo-500/25">
               <Sparkles className="h-7 w-7 text-white" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Gemini Vector Admin</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-white">VuKnowledgeBase Admin</h1>
             <p className="mt-2 text-sm text-slate-400">
-              Sign in to manage projects, documents, and Gemini embeddings
+              Sign in to manage projects, ingest website info & PDFs, and configure vector embeddings
             </p>
           </div>
 
