@@ -13,7 +13,10 @@ import {
   FileUp, 
   RefreshCw,
   ExternalLink,
-  GraduationCap
+  GraduationCap,
+  Plus,
+  X,
+  FolderPlus
 } from "lucide-react";
 import { StatusBadge } from "@/components/Badge";
 import { DocumentRecord, Project } from "@/lib/types";
@@ -45,6 +48,48 @@ function DocumentsContent() {
 
   // Notification message
   const [alertMessage, setAlertMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  // Quick Create Project Modal State
+  const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
+  const [quickProjectName, setQuickProjectName] = useState("");
+  const [quickProjectDesc, setQuickProjectDesc] = useState("");
+  const [creatingProject, setCreatingProject] = useState(false);
+
+  const handleQuickCreateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickProjectName.trim()) return;
+
+    setCreatingProject(true);
+    try {
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: quickProjectName.trim(),
+          description: quickProjectDesc.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.project) {
+        setProjects((prev) => [data.project, ...prev]);
+        setSelectedProjectId(data.project.id);
+        setShowCreateProjectModal(false);
+        setQuickProjectName("");
+        setQuickProjectDesc("");
+        setAlertMessage({
+          type: "success",
+          text: `Project "${data.project.name}" created and selected!`,
+        });
+      } else {
+        alert(data.error || "Failed to create project");
+      }
+    } catch (err: any) {
+      alert(`Error creating project: ${err.message}`);
+    } finally {
+      setCreatingProject(false);
+    }
+  };
 
   const fetchProjects = async () => {
     try {
@@ -112,7 +157,7 @@ function DocumentsContent() {
   const handleUploadFiles = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProjectId) {
-      setAlertMessage({ type: "error", text: "Please select a target Category first." });
+      setAlertMessage({ type: "error", text: "Please select a target Project first." });
       return;
     }
     if (selectedFiles.length === 0) {
@@ -155,7 +200,7 @@ function DocumentsContent() {
   const handleScrapeWeb = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProjectId) {
-      setAlertMessage({ type: "error", text: "Please select a target Category first." });
+      setAlertMessage({ type: "error", text: "Please select a target Project first." });
       return;
     }
     const urls = webUrlsText
@@ -197,7 +242,7 @@ function DocumentsContent() {
   const handleTextSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProjectId) {
-      setAlertMessage({ type: "error", text: "Please select a target Category first." });
+      setAlertMessage({ type: "error", text: "Please select a target Project first." });
       return;
     }
     if (!textContent.trim()) {
@@ -268,10 +313,10 @@ function DocumentsContent() {
           </p>
         </div>
 
-        {/* Category Selector Bar */}
-        <div className="flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-slate-950/80 p-2 shadow-lg">
+        {/* Project Selector & Quick Create Bar */}
+        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/[0.08] bg-slate-950/80 p-2 shadow-lg">
           <FolderKanban className="h-4 w-4 text-blue-400 ml-2" />
-          <span className="text-xs font-medium text-slate-400">Target Category:</span>
+          <span className="text-xs font-semibold text-slate-300">Target Project:</span>
           <select
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
@@ -283,6 +328,14 @@ function DocumentsContent() {
               </option>
             ))}
           </select>
+          <button
+            type="button"
+            onClick={() => setShowCreateProjectModal(true)}
+            className="flex items-center gap-1 rounded-xl bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white px-3 py-1.5 text-xs font-bold border border-blue-500/30 transition"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Create Project</span>
+          </button>
         </div>
       </div>
 
@@ -603,7 +656,7 @@ function DocumentsContent() {
               {documents.length === 0 && !loading && (
                 <tr>
                   <td colSpan={5} className="py-12 text-center text-slate-500">
-                    No documents uploaded to this category yet. Select an upload tab above to add Varendra University materials.
+                    No documents uploaded to this project yet. Select an upload tab above to add Varendra University materials.
                   </td>
                 </tr>
               )}
@@ -611,6 +664,71 @@ function DocumentsContent() {
           </table>
         </div>
       </div>
+
+      {/* Quick Create Project Modal */}
+      {showCreateProjectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md">
+          <div className="w-full max-w-md rounded-3xl border border-white/[0.1] bg-slate-900 p-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30">
+                  <FolderPlus className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-bold text-white">Create New Project</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCreateProjectModal(false)}
+                className="rounded-lg p-1 text-slate-400 hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleQuickCreateProject} className="mt-4 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Project Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={quickProjectName}
+                  onChange={(e) => setQuickProjectName(e.target.value)}
+                  placeholder="e.g. CSE Department, Admissions 2026, Tuition Policy"
+                  className="w-full rounded-xl border border-white/[0.1] bg-slate-950 px-3.5 py-2.5 text-xs text-white focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Description (Optional)</label>
+                <textarea
+                  rows={2}
+                  value={quickProjectDesc}
+                  onChange={(e) => setQuickProjectDesc(e.target.value)}
+                  placeholder="What documents will be kept in this project?"
+                  className="w-full rounded-xl border border-white/[0.1] bg-slate-950 p-3 text-xs text-white focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="mt-6 flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateProjectModal(false)}
+                  className="rounded-xl border border-white/[0.08] px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingProject || !quickProjectName.trim()}
+                  className="rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-2 text-xs font-bold text-white disabled:opacity-50"
+                >
+                  {creatingProject ? "Creating..." : "Create & Select Project"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

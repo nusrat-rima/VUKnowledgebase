@@ -45,7 +45,7 @@ function VectorSearchContent() {
     e.preventDefault();
     if (!query.trim()) return;
     if (!selectedProjectId) {
-      setError("Please select a target category.");
+      setError("Please select a target project.");
       return;
     }
 
@@ -105,9 +105,9 @@ function VectorSearchContent() {
       <div className="admin-card rounded-3xl p-6 sm:p-8 shadow-2xl">
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
-            {/* Category Picker */}
+            {/* Project Picker */}
             <div className="sm:w-72">
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">University Category</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Target Project</label>
               <select
                 value={selectedProjectId}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
@@ -231,7 +231,7 @@ function VectorSearchContent() {
 
         {results.length === 0 && !searching && hasSearched && (
           <div className="admin-card rounded-3xl p-12 text-center text-slate-400">
-            No matching documents found in this category. Try searching with different keywords.
+            No matching documents found in this project. Try searching with different keywords.
           </div>
         )}
 

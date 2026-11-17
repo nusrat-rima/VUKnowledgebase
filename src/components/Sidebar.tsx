@@ -14,7 +14,7 @@ import {
 
 const navigation = [
   { name: "Overview", href: "/admin", icon: LayoutDashboard },
-  { name: "Categories", href: "/admin/projects", icon: FolderKanban },
+  { name: "Projects", href: "/admin/projects", icon: FolderKanban },
   { name: "Upload Documents", href: "/admin/documents", icon: FileUp },
   { name: "Search Knowledge", href: "/admin/search", icon: Search },
 ];

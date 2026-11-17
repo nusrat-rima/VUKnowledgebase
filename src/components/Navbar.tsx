@@ -54,11 +54,11 @@ export function Navbar({ currentProjectId, onProjectChange }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-30 flex h-18 w-full items-center justify-between border-b border-white/[0.08] bg-slate-950/80 px-8 backdrop-blur-xl">
-      {/* Left: University Category Selector */}
+      {/* Left: University Project Selector */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
           <FolderKanban className="h-4 w-4 text-blue-400" />
-          <span>Active Category:</span>
+          <span>Active Project:</span>
         </div>
         <select
           value={selectedId}
@@ -70,7 +70,7 @@ export function Navbar({ currentProjectId, onProjectChange }: NavbarProps) {
               {p.name} ({p.documentCount || 0} docs)
             </option>
           ))}
-          {projects.length === 0 && <option value="">Loading categories...</option>}
+          {projects.length === 0 && <option value="">Loading projects...</option>}
         </select>
       </div>
 

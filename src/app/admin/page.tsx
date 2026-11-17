@@ -56,28 +56,38 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <Link
-          href="/admin/documents"
-          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-blue-600/25 transition"
-        >
-          <UploadCloud className="h-4 w-4" />
-          <span>Upload Documents</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/projects"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/[0.1] bg-slate-900 hover:bg-slate-800 px-4 py-2.5 text-xs font-bold text-slate-200 transition"
+          >
+            <FolderKanban className="h-4 w-4 text-blue-400" />
+            <span>+ Create Project</span>
+          </Link>
+
+          <Link
+            href="/admin/documents"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-blue-600/25 transition"
+          >
+            <UploadCloud className="h-4 w-4" />
+            <span>Upload Documents</span>
+          </Link>
+        </div>
       </div>
 
       {/* Metric Cards Grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Card 1: Categories */}
+        {/* Card 1: Projects */}
         <div className="admin-card rounded-3xl p-6">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Categories</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Projects</span>
             <div className="rounded-2xl bg-blue-500/10 p-2.5 text-blue-400 border border-blue-500/20">
               <FolderKanban className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4">
             <span className="text-3xl font-extrabold text-white">{projects.length}</span>
-            <p className="mt-1 text-xs text-slate-400">University sections</p>
+            <p className="mt-1 text-xs text-slate-400">University projects</p>
           </div>
         </div>
 
