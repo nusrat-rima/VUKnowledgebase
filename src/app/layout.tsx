@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "VuKnowledgeBase - Intelligent Document & Vector Knowledge Base",
-  description: "AI-powered knowledge base searching PDFs, scraped website information, and documents with Gemini and NeonDB",
+  title: "Varendra University Knowledge Base - Admin Portal",
+  description: "Official Document & Knowledge Management System for Varendra University, Rajshahi",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-[#090d16] text-slate-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+      <body className="min-h-screen bg-[#070b14] text-slate-100 antialiased selection:bg-blue-600/30 selection:text-blue-200">
         {children}
       </body>
     </html>

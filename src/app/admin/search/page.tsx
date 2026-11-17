@@ -4,16 +4,13 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { 
   Search, 
-  Sparkles, 
-  Layers, 
-  FolderKanban, 
   FileText, 
-  Clock, 
-  Database, 
+  Globe, 
   Copy, 
   Check, 
-  Sliders,
-  ChevronRight
+  FolderKanban,
+  ExternalLink,
+  BookOpen
 } from "lucide-react";
 import { Project, VectorQueryResult } from "@/lib/types";
 
@@ -24,12 +21,11 @@ function VectorSearchContent() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string>(initialProjectId);
   const [query, setQuery] = useState("");
-  const [topK, setTopK] = useState(5);
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState<VectorQueryResult[]>([]);
-  const [searchMeta, setSearchMeta] = useState<any>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     fetch("/api/projects")
@@ -42,19 +38,20 @@ function VectorSearchContent() {
           }
         }
       })
-      .catch((err) => console.error("Error fetching projects:", err));
+      .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
     if (!selectedProjectId) {
-      setError("Please select a target project.");
+      setError("Please select a target category.");
       return;
     }
 
     setSearching(true);
     setError(null);
+    setHasSearched(true);
 
     try {
       const res = await fetch("/api/search", {
@@ -63,7 +60,7 @@ function VectorSearchContent() {
         body: JSON.stringify({
           query: query.trim(),
           projectId: selectedProjectId,
-          topK,
+          topK: 6,
         }),
       });
 
@@ -73,12 +70,6 @@ function VectorSearchContent() {
       }
 
       setResults(data.matches || []);
-      setSearchMeta({
-        executionTimeMs: data.executionTimeMs,
-        provider: data.provider,
-        model: data.model,
-        count: data.matchCount,
-      });
     } catch (err: any) {
       setError(err.message);
       setResults([]);
@@ -98,25 +89,29 @@ function VectorSearchContent() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">NeonDB pgvector</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-blue-400">
+            Varendra University, Rajshahi
+          </span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Vector Search Playground</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+          Knowledge Base Search
+        </h1>
         <p className="text-sm text-slate-400 mt-1">
-          Perform real-time cosine similarity searches against your vectorized documents using <span className="font-mono font-bold text-indigo-400">gemini-embedding-001</span>
+          Query and verify official university information across all uploaded documents, PDFs, and website pages
         </p>
       </div>
 
-      {/* Query Bar & Controls */}
-      <div className="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl">
+      {/* Query Bar */}
+      <div className="admin-card rounded-3xl p-6 sm:p-8 shadow-2xl">
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
-            {/* Project Picker */}
-            <div className="sm:w-64">
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Project Scope</label>
+            {/* Category Picker */}
+            <div className="sm:w-72">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">University Category</label>
               <select
                 value={selectedProjectId}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3.5 py-2.5 text-xs font-semibold text-white focus:border-indigo-500 focus:outline-none"
+                className="w-full rounded-xl border border-white/[0.1] bg-slate-950 px-3.5 py-3 text-xs font-semibold text-white focus:border-blue-500 focus:outline-none"
               >
                 {projects.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -128,35 +123,19 @@ function VectorSearchContent() {
 
             {/* Query Input */}
             <div className="flex-1">
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Semantic Query</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Question or Topic to Search</label>
               <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500">
                   <Search className="h-4 w-4" />
                 </div>
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="e.g. What are the key terms mentioned in our agreements? / How does the integration work?"
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 py-2.5 pl-10 pr-4 text-xs text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
+                  placeholder="e.g. What are the admission fees for CSE? / Library opening hours / Waiver criteria"
+                  className="w-full rounded-xl border border-white/[0.1] bg-slate-950 py-3 pl-11 pr-4 text-xs text-white placeholder-slate-600 focus:border-blue-500 focus:outline-none"
                 />
               </div>
-            </div>
-
-            {/* Top-K Selector */}
-            <div className="w-28">
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Top-K</label>
-              <select
-                value={topK}
-                onChange={(e) => setTopK(Number(e.target.value))}
-                className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
-              >
-                <option value={3}>Top 3</option>
-                <option value={5}>Top 5</option>
-                <option value={10}>Top 10</option>
-                <option value={15}>Top 15</option>
-                <option value={20}>Top 20</option>
-              </select>
             </div>
 
             {/* Submit Button */}
@@ -164,15 +143,12 @@ function VectorSearchContent() {
               <button
                 type="submit"
                 disabled={searching || !query.trim()}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-500 disabled:opacity-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 px-6 py-3 text-xs font-bold text-white shadow-lg shadow-blue-600/25 transition disabled:opacity-50"
               >
                 {searching ? (
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 ) : (
-                  <>
-                    <Sparkles className="h-4 w-4" />
-                    <span>Search</span>
-                  </>
+                  <span>Search</span>
                 )}
               </button>
             </div>
@@ -182,89 +158,59 @@ function VectorSearchContent() {
         {/* Error */}
         {error && (
           <div className="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs text-rose-300">
-            <strong>Error:</strong> {error}
+            <strong>Notice:</strong> {error}
           </div>
         )}
       </div>
 
-      {/* Meta Stats Bar if searched */}
-      {searchMeta && (
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-800 bg-slate-950/60 px-5 py-3 text-xs text-slate-400">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5 font-semibold text-slate-200">
-              <Layers className="h-4 w-4 text-emerald-400" />
-              Found {searchMeta.count} matching chunk(s)
-            </span>
-            <span className="text-slate-600">•</span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-slate-400" />
-              {searchMeta.executionTimeMs} ms
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4 font-mono text-[11px]">
-            <span>Model: <strong className="text-indigo-400">{searchMeta.model}</strong></span>
-            <span>Vector DB: <strong className="text-indigo-300 uppercase">{searchMeta.provider}</strong></span>
-          </div>
-        </div>
-      )}
-
       {/* Results List */}
       <div className="space-y-4">
         {results.map((match, idx) => {
-          const scorePercent = Math.round(match.score * 100);
           const meta = match.metadata || {};
 
           return (
             <div
               key={match.id}
-              className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl backdrop-blur-sm transition hover:border-slate-700"
+              className="admin-card rounded-3xl p-6 shadow-xl transition"
             >
               {/* Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-800/80 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-white/[0.08] pb-3.5">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-800 text-xs font-mono font-bold text-slate-300">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-blue-600/20 text-xs font-bold text-blue-300 border border-blue-500/30">
                     #{idx + 1}
                   </span>
                   <div>
-                    <h3 className="font-semibold text-sm text-white">{meta.documentTitle || "Document"}</h3>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-500 font-mono">
-                      <span>Chunk {meta.chunkIndex ?? 0} of {meta.totalChunks ?? 1}</span>
-                      {meta.sourceUrl && (
-                        <>
-                          <span>•</span>
-                          <a
-                            href={meta.sourceUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-indigo-400 hover:underline truncate max-w-xs"
-                          >
-                            {meta.sourceUrl}
-                          </a>
-                        </>
+                    <div className="flex items-center gap-2">
+                      {meta.sourceType === "web" ? (
+                        <Globe className="h-3.5 w-3.5 text-sky-400" />
+                      ) : (
+                        <FileText className="h-3.5 w-3.5 text-blue-400" />
                       )}
+                      <h3 className="font-bold text-sm text-white">{meta.documentTitle || "Official Document"}</h3>
                     </div>
+                    {meta.sourceUrl && (
+                      <a
+                        href={meta.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] text-blue-400 hover:underline flex items-center gap-1 mt-0.5"
+                      >
+                        <span>{meta.sourceUrl}</span>
+                        <ExternalLink className="h-2.5 w-2.5" />
+                      </a>
+                    )}
                   </div>
                 </div>
 
-                {/* Score badge */}
                 <div className="flex items-center gap-2">
-                  <div
-                    className={`rounded-full px-3 py-1 text-xs font-bold font-mono border ${
-                      scorePercent >= 80
-                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                        : scorePercent >= 60
-                        ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/30"
-                        : "bg-slate-500/10 text-slate-400 border-slate-500/30"
-                    }`}
-                  >
-                    {scorePercent}% Similarity
-                  </div>
+                  <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-0.5 text-[11px] font-semibold text-emerald-400">
+                    Relevant Match
+                  </span>
 
                   <button
                     onClick={() => copyToClipboard(meta.text || "", match.id)}
                     className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition"
-                    title="Copy chunk text"
+                    title="Copy excerpt"
                   >
                     {copiedId === match.id ? (
                       <Check className="h-4 w-4 text-emerald-400" />
@@ -276,23 +222,23 @@ function VectorSearchContent() {
               </div>
 
               {/* Chunk text content */}
-              <div className="mt-4 rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 text-xs text-slate-300 leading-relaxed font-sans whitespace-pre-wrap">
-                {meta.text || "No text available for this chunk."}
+              <div className="mt-4 rounded-2xl border border-white/[0.04] bg-slate-950/60 p-4 text-xs text-slate-300 leading-relaxed font-sans whitespace-pre-wrap">
+                {meta.text || "No excerpt content available."}
               </div>
             </div>
           );
         })}
 
-        {results.length === 0 && !searching && searchMeta && (
-          <div className="rounded-2xl border border-slate-800 p-12 text-center text-slate-500">
-            No matching chunks found above similarity threshold. Try a broader search query.
+        {results.length === 0 && !searching && hasSearched && (
+          <div className="admin-card rounded-3xl p-12 text-center text-slate-400">
+            No matching documents found in this category. Try searching with different keywords.
           </div>
         )}
 
-        {results.length === 0 && !searchMeta && (
-          <div className="rounded-2xl border border-dashed border-slate-800 p-12 text-center text-slate-500">
-            <Search className="mx-auto h-8 w-8 text-slate-600 mb-2" />
-            <p className="text-sm">Enter a search query above to test Gemini vector embeddings.</p>
+        {results.length === 0 && !hasSearched && (
+          <div className="rounded-3xl border border-dashed border-white/[0.1] p-12 text-center text-slate-500">
+            <BookOpen className="mx-auto h-8 w-8 text-slate-600 mb-2" />
+            <p className="text-sm">Search across Varendra University official documents above.</p>
           </div>
         )}
       </div>
@@ -302,7 +248,7 @@ function VectorSearchContent() {
 
 export default function VectorSearchPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-slate-400">Loading vector search playground...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-slate-400">Loading search portal...</div>}>
       <VectorSearchContent />
     </Suspense>
   );

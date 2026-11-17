@@ -8,16 +8,14 @@ import {
   FileText, 
   FolderKanban, 
   Trash2, 
-  Terminal, 
-  Sparkles, 
   CheckCircle2, 
   Loader2, 
   FileUp, 
-  Plus,
-  RefreshCw
+  RefreshCw,
+  ExternalLink,
+  GraduationCap
 } from "lucide-react";
 import { StatusBadge } from "@/components/Badge";
-import { JobProgressModal } from "@/components/JobProgressModal";
 import { DocumentRecord, Project } from "@/lib/types";
 
 function DocumentsContent() {
@@ -44,9 +42,6 @@ function DocumentsContent() {
   const [textTitle, setTextTitle] = useState("");
   const [textContent, setTextContent] = useState("");
   const [submittingText, setSubmittingText] = useState(false);
-
-  // Active Job Inspection Modal
-  const [inspectJobId, setInspectJobId] = useState<string | null>(null);
 
   // Notification message
   const [alertMessage, setAlertMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -117,11 +112,11 @@ function DocumentsContent() {
   const handleUploadFiles = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProjectId) {
-      setAlertMessage({ type: "error", text: "Please select a target Project first." });
+      setAlertMessage({ type: "error", text: "Please select a target Category first." });
       return;
     }
     if (selectedFiles.length === 0) {
-      setAlertMessage({ type: "error", text: "Please select at least one file to upload." });
+      setAlertMessage({ type: "error", text: "Please select at least one document or PDF to upload." });
       return;
     }
 
@@ -145,7 +140,7 @@ function DocumentsContent() {
 
       setAlertMessage({
         type: "success",
-        text: `Queued ${selectedFiles.length} file(s). Conversion to Gemini embeddings has started in the background!`,
+        text: `Uploaded ${selectedFiles.length} file(s). Content is being processed and indexed into the knowledge base!`,
       });
       setSelectedFiles([]);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -160,7 +155,7 @@ function DocumentsContent() {
   const handleScrapeWeb = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProjectId) {
-      setAlertMessage({ type: "error", text: "Please select a target Project first." });
+      setAlertMessage({ type: "error", text: "Please select a target Category first." });
       return;
     }
     const urls = webUrlsText
@@ -169,7 +164,7 @@ function DocumentsContent() {
       .filter((u) => u.length > 0);
 
     if (urls.length === 0) {
-      setAlertMessage({ type: "error", text: "Please enter at least one URL." });
+      setAlertMessage({ type: "error", text: "Please enter at least one URL from Varendra University." });
       return;
     }
 
@@ -184,11 +179,11 @@ function DocumentsContent() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Scraping failed");
+      if (!res.ok) throw new Error(data.error || "Web collection failed");
 
       setAlertMessage({
         type: "success",
-        text: `Queued ${urls.length} website URL(s). Background scraping and vectorization started!`,
+        text: `Submitted ${urls.length} website link(s). Web content is being collected and indexed into the knowledge base!`,
       });
       setWebUrlsText("");
       fetchDocuments();
@@ -202,11 +197,11 @@ function DocumentsContent() {
   const handleTextSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProjectId) {
-      setAlertMessage({ type: "error", text: "Please select a target Project first." });
+      setAlertMessage({ type: "error", text: "Please select a target Category first." });
       return;
     }
     if (!textContent.trim()) {
-      setAlertMessage({ type: "error", text: "Text content cannot be empty." });
+      setAlertMessage({ type: "error", text: "Information content cannot be empty." });
       return;
     }
 
@@ -219,17 +214,17 @@ function DocumentsContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           projectId: selectedProjectId,
-          title: textTitle.trim() || "Collected Web Information",
+          title: textTitle.trim() || "Varendra University Information Note",
           content: textContent,
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to submit text");
+      if (!res.ok) throw new Error(data.error || "Failed to submit information");
 
       setAlertMessage({
         type: "success",
-        text: "Note submitted! Background Gemini embedding generation has started.",
+        text: "University note submitted and indexed into the knowledge base!",
       });
       setTextTitle("");
       setTextContent("");
@@ -242,7 +237,7 @@ function DocumentsContent() {
   };
 
   const handleDeleteDocument = async (id: string, title: string) => {
-    if (!confirm(`Delete "${title}" and remove its vectors from the Vector DB?`)) {
+    if (!confirm(`Delete "${title}" from the Varendra University knowledge base?`)) {
       return;
     }
     try {
@@ -257,28 +252,30 @@ function DocumentsContent() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Page Header & Project Selector */}
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">VuKnowledgeBase Core</span>
-            <span className="h-1 w-1 rounded-full bg-slate-600" />
-            <span className="text-xs text-slate-400">NeonDB Connected</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-400">
+              Varendra University, Rajshahi
+            </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Document Ingestion & Embeddings</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            Upload & Manage Documents
+          </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Upload PDFs, crawl websites, or ingest notes — vectorized with <code className="text-indigo-400 font-mono font-bold">gemini-embedding-001</code> in the background
+            Upload official prospectuses, syllabuses, notices, or collect information directly from university websites
           </p>
         </div>
 
-        {/* Project Selector Bar */}
+        {/* Category Selector Bar */}
         <div className="flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-slate-950/80 p-2 shadow-lg">
-          <FolderKanban className="h-4 w-4 text-indigo-400 ml-2" />
-          <span className="text-xs font-medium text-slate-400">Target Project:</span>
+          <FolderKanban className="h-4 w-4 text-blue-400 ml-2" />
+          <span className="text-xs font-medium text-slate-400">Target Category:</span>
           <select
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
-            className="rounded-xl border border-white/[0.1] bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white focus:border-indigo-500 focus:outline-none"
+            className="rounded-xl border border-white/[0.1] bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white focus:border-blue-500 focus:outline-none"
           >
             {projects.map((p) => (
               <option key={p.id} value={p.id}>
@@ -308,63 +305,63 @@ function DocumentsContent() {
       )}
 
       {/* Ingestion Source Tabs */}
-      <div className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
+      <div className="admin-card rounded-3xl overflow-hidden shadow-2xl">
         {/* Tab Header */}
         <div className="flex border-b border-white/[0.08] bg-slate-950/60 p-2 gap-2">
           <button
             onClick={() => setActiveTab("files")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition ${
               activeTab === "files"
-                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                 : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <UploadCloud className="h-4 w-4" />
-            <span>Upload Documents (PDF, TXT, MD)</span>
+            <span>Upload PDFs & Files</span>
           </button>
 
           <button
             onClick={() => setActiveTab("web")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition ${
               activeTab === "web"
-                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                 : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <Globe className="h-4 w-4" />
-            <span>Scrape Websites / URLs</span>
+            <span>Collect from Website (vu.edu.bd)</span>
           </button>
 
           <button
             onClick={() => setActiveTab("text")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition ${
               activeTab === "text"
-                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                 : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <FileText className="h-4 w-4" />
-            <span>Raw Text Note</span>
+            <span>University Notes & Text</span>
           </button>
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">
+        <div className="p-6 sm:p-8">
           {/* TAB 1: File Upload */}
           {activeTab === "files" && (
             <form onSubmit={handleUploadFiles} className="space-y-5">
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleFileDrop}
-                className="group flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/[0.12] bg-slate-950/60 p-10 text-center transition hover:border-indigo-500/50 hover:bg-slate-950/80 cursor-pointer"
+                className="group flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/[0.12] bg-slate-950/60 p-10 text-center transition hover:border-blue-500/50 hover:bg-slate-950/80 cursor-pointer"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600/15 text-indigo-400 border border-indigo-500/25 mb-4 group-hover:scale-110 transition shadow-lg shadow-indigo-500/10">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600/15 text-blue-400 border border-blue-500/25 mb-4 group-hover:scale-110 transition shadow-lg shadow-blue-500/10">
                   <FileUp className="h-7 w-7" />
                 </div>
                 <p className="text-base font-bold text-white">
-                  Drop your PDF, TXT, or markdown documents here, or{" "}
-                  <span className="text-indigo-400 underline decoration-indigo-500/40 underline-offset-4">browse files</span>
+                  Drop Varendra University PDFs and documents here, or{" "}
+                  <span className="text-blue-400 underline decoration-blue-500/40 underline-offset-4">browse files</span>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -376,13 +373,13 @@ function DocumentsContent() {
                     className="hidden"
                   />
                 </p>
-                <p className="text-xs text-slate-400 mt-2 max-w-sm">
-                  Documents are parsed, split into semantic windows, and embedded directly with <code className="text-indigo-300 font-mono">gemini-embedding-001</code> into NeonDB.
+                <p className="text-xs text-slate-400 mt-2 max-w-md">
+                  Upload syllabus copies, admission circulars, examination schedules, fee charts, and student guidelines.
                 </p>
 
                 {/* Formats row */}
-                <div className="flex items-center gap-2 mt-5">
-                  {["PDF Documents", "Plain Text (.txt)", "Markdown (.md)", "JSON / CSV"].map((fmt, i) => (
+                <div className="flex flex-wrap items-center justify-center gap-2 mt-5">
+                  {["PDF Documents", "Academic Calendars", "Notices & Circulars", "Text & Markdown"].map((fmt, i) => (
                     <span
                       key={i}
                       className="rounded-full bg-white/[0.04] border border-white/[0.08] px-3 py-1 text-[10px] font-mono font-medium text-slate-400"
@@ -397,9 +394,9 @@ function DocumentsContent() {
                     {selectedFiles.map((f, i) => (
                       <span
                         key={i}
-                        className="rounded-xl bg-indigo-600/20 px-3 py-1.5 text-xs font-mono font-semibold text-indigo-200 border border-indigo-500/30 flex items-center gap-1.5"
+                        className="rounded-xl bg-blue-600/20 px-3 py-1.5 text-xs font-mono font-semibold text-blue-200 border border-blue-500/30 flex items-center gap-1.5"
                       >
-                        <FileText className="h-3.5 w-3.5 text-indigo-400" />
+                        <FileText className="h-3.5 w-3.5 text-blue-400" />
                         <span>{f.name}</span>
                         <span className="text-slate-400 text-[10px]">({(f.size / 1024).toFixed(1)} KB)</span>
                       </span>
@@ -412,17 +409,17 @@ function DocumentsContent() {
                 <button
                   type="submit"
                   disabled={uploadingFiles || selectedFiles.length === 0}
-                  className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 px-6 py-3 text-xs font-bold text-white shadow-lg shadow-indigo-600/25 transition active:scale-95 disabled:opacity-40"
+                  className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 px-6 py-3 text-xs font-bold text-white shadow-lg shadow-blue-600/25 transition active:scale-95 disabled:opacity-40"
                 >
                   {uploadingFiles ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Queueing Background Ingestion...</span>
+                      <span>Processing & Indexing...</span>
                     </>
                   ) : (
                     <>
-                      <Sparkles className="h-4 w-4" />
-                      <span>Ingest & Vectorize {selectedFiles.length > 0 ? `(${selectedFiles.length} files)` : ""}</span>
+                      <UploadCloud className="h-4 w-4" />
+                      <span>Upload & Index {selectedFiles.length > 0 ? `(${selectedFiles.length} files)` : ""}</span>
                     </>
                   )}
                 </button>
@@ -434,18 +431,18 @@ function DocumentsContent() {
           {activeTab === "web" && (
             <form onSubmit={handleScrapeWeb} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">
-                  Website URLs (Enter one URL per line):
+                <label className="block text-xs font-semibold text-slate-300 mb-2">
+                  Varendra University Website URLs (Enter one URL per line):
                 </label>
                 <textarea
                   rows={4}
                   value={webUrlsText}
                   onChange={(e) => setWebUrlsText(e.target.value)}
-                  placeholder={`https://example.com/docs/api-guide\nhttps://example.com/blog/introduction`}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3.5 text-xs text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none font-mono"
+                  placeholder={`https://vu.edu.bd/admission\nhttps://vu.edu.bd/department/cse\nhttps://vu.edu.bd/tuition-fees`}
+                  className="w-full rounded-2xl border border-white/[0.1] bg-slate-950 p-4 text-xs text-white placeholder-slate-600 focus:border-blue-500 focus:outline-none font-mono"
                 />
-                <p className="text-[11px] text-slate-500 mt-1">
-                  The background worker will fetch each web page, strip scripts and styles, extract clean article text, chunk it, and compute Gemini embeddings.
+                <p className="text-[11px] text-slate-400 mt-2">
+                  The system will automatically fetch each webpage from <code className="text-blue-300 font-mono">vu.edu.bd</code>, extract the official information, and index it into the knowledge base.
                 </p>
               </div>
 
@@ -453,17 +450,17 @@ function DocumentsContent() {
                 <button
                   type="submit"
                   disabled={scrapingWeb || !webUrlsText.trim()}
-                  className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-500 disabled:opacity-50"
+                  className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 px-6 py-3 text-xs font-bold text-white shadow-lg shadow-blue-600/25 transition active:scale-95 disabled:opacity-40"
                 >
                   {scrapingWeb ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Queueing Scraping Jobs...</span>
+                      <span>Collecting Information...</span>
                     </>
                   ) : (
                     <>
                       <Globe className="h-4 w-4" />
-                      <span>Scrape & Vectorize Websites</span>
+                      <span>Collect & Index Website Pages</span>
                     </>
                   )}
                 </button>
@@ -475,24 +472,28 @@ function DocumentsContent() {
           {activeTab === "text" && (
             <form onSubmit={handleTextSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Title / Topic</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Subject / Notice Title
+                </label>
                 <input
                   type="text"
                   value={textTitle}
                   onChange={(e) => setTextTitle(e.target.value)}
-                  placeholder="e.g. Competitor Research Notes, Customer FAQs"
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3.5 py-2 text-xs text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
+                  placeholder="e.g. Spring 2026 Admission Notice, CSE Lab Schedule"
+                  className="w-full rounded-xl border border-white/[0.1] bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-blue-500 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Content Text / Markdown</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Information Content
+                </label>
                 <textarea
                   rows={6}
                   value={textContent}
                   onChange={(e) => setTextContent(e.target.value)}
-                  placeholder="Paste any collected text, notes, copied website paragraphs, or markdown here..."
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3.5 text-xs text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
+                  placeholder="Paste official notices, admission requirements, faculty details, or university announcements here..."
+                  className="w-full rounded-xl border border-white/[0.1] bg-slate-950 p-4 text-xs text-white placeholder-slate-600 focus:border-blue-500 focus:outline-none"
                 />
               </div>
 
@@ -500,7 +501,7 @@ function DocumentsContent() {
                 <button
                   type="submit"
                   disabled={submittingText || !textContent.trim()}
-                  className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-500 disabled:opacity-50"
+                  className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 px-6 py-3 text-xs font-bold text-white shadow-lg shadow-blue-600/25 transition active:scale-95 disabled:opacity-40"
                 >
                   {submittingText ? (
                     <>
@@ -509,8 +510,8 @@ function DocumentsContent() {
                     </>
                   ) : (
                     <>
-                      <Sparkles className="h-4 w-4" />
-                      <span>Ingest & Vectorize Note</span>
+                      <FileText className="h-4 w-4" />
+                      <span>Save & Index Information</span>
                     </>
                   )}
                 </button>
@@ -520,18 +521,18 @@ function DocumentsContent() {
         </div>
       </div>
 
-      {/* Ingestion Activity & Documents Table */}
-      <div className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
+      {/* Documents Table */}
+      <div className="admin-card rounded-3xl overflow-hidden shadow-2xl">
         <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4.5 bg-slate-950/40">
           <div>
-            <h2 className="text-base font-bold text-white">Project Documents & Vector Status</h2>
+            <h2 className="text-base font-bold text-white">University Documents & Records</h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              Real-time background conversion status and chunk indexing in NeonDB
+              All documents currently stored in the Varendra University knowledge repository
             </p>
           </div>
           <button
             onClick={() => fetchDocuments()}
-            className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-slate-900/80 px-3.5 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:border-slate-700 transition"
+            className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-slate-900 px-3.5 py-2 text-xs font-semibold text-slate-300 hover:text-white transition"
           >
             <RefreshCw className="h-3.5 w-3.5" />
             <span>Refresh</span>
@@ -540,19 +541,18 @@ function DocumentsContent() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="border-b border-slate-800/80 bg-slate-950/40 text-[11px] uppercase tracking-wider text-slate-400">
+            <thead className="border-b border-white/[0.08] bg-slate-950/40 text-[11px] uppercase tracking-wider text-slate-400">
               <tr>
-                <th className="px-6 py-3">Document Title</th>
-                <th className="px-6 py-3">Source</th>
-                <th className="px-6 py-3">Conversion Status</th>
-                <th className="px-6 py-3">Progress</th>
-                <th className="px-6 py-3">Chunks</th>
-                <th className="px-6 py-3 text-right">Actions</th>
+                <th className="px-6 py-4">Document Title</th>
+                <th className="px-6 py-4">Type</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Date Uploaded</th>
+                <th className="px-6 py-4 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-white/[0.06]">
               {documents.map((doc) => (
-                <tr key={doc.id} className="hover:bg-slate-800/20 transition">
+                <tr key={doc.id} className="hover:bg-white/[0.02] transition">
                   <td className="px-6 py-4">
                     <div className="font-semibold text-slate-200 truncate max-w-sm">
                       {doc.title}
@@ -562,81 +562,48 @@ function DocumentsContent() {
                         href={doc.sourceUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[11px] text-indigo-400/80 hover:underline truncate block max-w-sm mt-0.5"
+                        className="text-[11px] text-blue-400 hover:underline flex items-center gap-1 mt-0.5 truncate max-w-sm"
                       >
-                        {doc.sourceUrl}
+                        <span>{doc.sourceUrl}</span>
+                        <ExternalLink className="h-2.5 w-2.5" />
                       </a>
-                    )}
-                    {doc.errorMessage && (
-                      <span className="text-[11px] text-rose-400 block mt-1">
-                        {doc.errorMessage}
-                      </span>
                     )}
                   </td>
 
                   <td className="px-6 py-4">
-                    <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-mono text-slate-300 uppercase">
+                    <span className="rounded-lg bg-slate-800 px-2.5 py-1 text-[10px] font-mono font-medium text-slate-300 uppercase border border-white/[0.06]">
                       {doc.sourceType}
                     </span>
                   </td>
 
                   <td className="px-6 py-4">
-                    <StatusBadge status={doc.status} progress={doc.progress} />
+                    <StatusBadge status={doc.status} />
                   </td>
 
-                  <td className="px-6 py-4 w-44">
-                    <div className="space-y-1">
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
-                        <div
-                          className={`h-full transition-all duration-300 ${
-                            doc.status === "failed"
-                              ? "bg-rose-500"
-                              : doc.status === "completed"
-                              ? "bg-emerald-500"
-                              : "bg-indigo-500"
-                          }`}
-                          style={{ width: `${Math.max(5, doc.progress || 0)}%` }}
-                        />
-                      </div>
-                      <span className="text-[10px] text-slate-500 truncate block">
-                        {doc.currentStage || "Pending"}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="px-6 py-4 font-mono text-slate-300">
-                    {doc.embeddedChunks || 0} / {doc.totalChunks || 0}
+                  <td className="px-6 py-4 text-slate-400 whitespace-nowrap">
+                    {new Date(doc.createdAt).toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
                   </td>
 
                   <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => {
-                          // Find job id by document id or format
-                          setInspectJobId(`job_${doc.id.replace('doc_', '')}`);
-                        }}
-                        className="rounded-lg border border-slate-800 bg-slate-900/80 px-2.5 py-1 text-xs text-indigo-300 hover:bg-indigo-600/10 hover:text-indigo-200 transition"
-                        title="View background job trace & logs"
-                      >
-                        <Terminal className="h-3.5 w-3.5" />
-                      </button>
-
-                      <button
-                        onClick={() => handleDeleteDocument(doc.id, doc.title)}
-                        className="rounded-lg p-1 text-slate-500 hover:bg-rose-500/10 hover:text-rose-400 transition"
-                        title="Delete document and its vectors"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleDeleteDocument(doc.id, doc.title)}
+                      className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 transition"
+                      title="Remove document from knowledge base"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </td>
                 </tr>
               ))}
 
               {documents.length === 0 && !loading && (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500">
-                    No documents uploaded to this project yet. Use the tabs above to ingest files or website links!
+                  <td colSpan={5} className="py-12 text-center text-slate-500">
+                    No documents uploaded to this category yet. Select an upload tab above to add Varendra University materials.
                   </td>
                 </tr>
               )}
@@ -644,12 +611,6 @@ function DocumentsContent() {
           </table>
         </div>
       </div>
-
-      {/* Background Job Logs Modal */}
-      <JobProgressModal
-        jobId={inspectJobId}
-        onClose={() => setInspectJobId(null)}
-      />
     </div>
   );
 }

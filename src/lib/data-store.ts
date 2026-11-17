@@ -32,14 +32,40 @@ class DataStore {
         const raw = fs.readFileSync(this.filePath, "utf-8");
         this.db = JSON.parse(raw);
       } else {
-        // Create initial default project
+        // Create initial Varendra University categories
         const now = new Date().toISOString();
         this.db.projects = [
           {
-            id: DEFAULT_PROJECT_ID,
-            name: "Main Knowledge Base",
-            description: "Default project for uploaded documents and website embeddings",
-            vectorNamespace: DEFAULT_PROJECT_ID,
+            id: "cat_admissions",
+            name: "Admissions & Tuition",
+            description: "Undergraduate and graduate admission requirements, fee structures, and waiver policies",
+            vectorNamespace: "cat_admissions",
+            chunkSize: ENTRY_CONFIG.DEFAULT_CHUNK_SIZE,
+            chunkOverlap: ENTRY_CONFIG.DEFAULT_CHUNK_OVERLAP,
+            createdAt: now,
+            updatedAt: now,
+            documentCount: 0,
+            chunkCount: 0,
+            vectorCount: 0,
+          },
+          {
+            id: "cat_academics",
+            name: "Faculties & Academic Curricula",
+            description: "Department course outlines, credit details, faculty profiles, and program syllabuses",
+            vectorNamespace: "cat_academics",
+            chunkSize: ENTRY_CONFIG.DEFAULT_CHUNK_SIZE,
+            chunkOverlap: ENTRY_CONFIG.DEFAULT_CHUNK_OVERLAP,
+            createdAt: now,
+            updatedAt: now,
+            documentCount: 0,
+            chunkCount: 0,
+            vectorCount: 0,
+          },
+          {
+            id: "cat_policies",
+            name: "Rules, Policies & Notices",
+            description: "Exam regulations, code of conduct, academic calendars, and administrative circulars",
+            vectorNamespace: "cat_policies",
             chunkSize: ENTRY_CONFIG.DEFAULT_CHUNK_SIZE,
             chunkOverlap: ENTRY_CONFIG.DEFAULT_CHUNK_OVERLAP,
             createdAt: now,
@@ -54,16 +80,30 @@ class DataStore {
     } catch {
       // Memory fallback for readonly serverless
       if (this.db.projects.length === 0) {
+        const now = new Date().toISOString();
         this.db.projects = [
           {
-            id: DEFAULT_PROJECT_ID,
-            name: "Main Knowledge Base",
-            description: "Default project for uploaded documents and website embeddings",
-            vectorNamespace: DEFAULT_PROJECT_ID,
+            id: "cat_admissions",
+            name: "Admissions & Tuition",
+            description: "Undergraduate and graduate admission requirements, fee structures, and waiver policies",
+            vectorNamespace: "cat_admissions",
             chunkSize: 800,
             chunkOverlap: 150,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt: now,
+            updatedAt: now,
+            documentCount: 0,
+            chunkCount: 0,
+            vectorCount: 0,
+          },
+          {
+            id: "cat_academics",
+            name: "Faculties & Academic Curricula",
+            description: "Department course outlines, credit details, faculty profiles, and program syllabuses",
+            vectorNamespace: "cat_academics",
+            chunkSize: 800,
+            chunkOverlap: 150,
+            createdAt: now,
+            updatedAt: now,
             documentCount: 0,
             chunkCount: 0,
             vectorCount: 0,
